@@ -1,0 +1,107 @@
+#Program Description: Encryption with array and decrypts 
+#Author: Austin Yono
+#Date: 10/08/19
+
+.data
+intarray: .word 0,0,0,0,0,0,0,0,0
+space: .asciiz "\n"
+chararray: .byte '_','_','_','_','_','_','_','_','_','_','_'
+
+encarray: .byte '_','_','_','_','_','_','_','_','_','_'
+decarray: .byte '_','_','_','_','_','_','_','_','_','_'
+space2: .asciiz "\n"
+str1: .asciiz "Please enter the word you want to send (9 characters)"
+space3: .asciiz "\n"
+str2: .asciiz "Your encrypted message: \n"
+str3: .asciiz "Your decrypted message: \n"
+
+.text
+li $v0, 4
+la $a0, str1 #print str1
+syscall
+
+li $v0, 8 #accepts characters
+la $a0, chararray #places in this array
+li $a1, 9 #number of char the array can hold
+syscall
+
+li $v0, 4
+la $a0, chararray #stores into string
+syscall
+
+
+li $t2, 10
+li $t0, 9
+la $s0, chararray #loads string into $s0
+
+li $v0, 4
+la $a0, space
+syscall
+
+la $s1, encarray #copies string into copyarray into $s1
+
+loop:
+beq $t0, $0, print #loop if $t0 = 0 go to print
+lb $t1, 0($s0) #loads byte
+xor $t3, $t1, $t2 #xor operation in binary
+sb $t3, 0($s1) #stores byte then stacks character
+addi $t0, $t0, -1 #goes through loop for all characters
+addi $s0, $s0, 1 #adds 1 to stack in chararray
+addi $s1, $s1, 1 #adds 1 to stack in encarray
+li $t3, 0
+
+j loop
+
+print:
+li $v0, 4
+la $a0, space
+syscall
+
+li $v0, 4
+la $a0, str2
+syscall
+
+li $v0, 4
+la $a0, encarray #prints array
+syscall
+
+li $t0, 9
+li $t2, 10
+
+
+la $s1, encarray #copies string into copyarray into $s1
+
+li $v0, 4
+la $a0, space
+syscall
+
+la $s2, decarray
+
+loop2:
+beq $t0, $0, exit #loop if $t0 = 0 go to print
+lb $t1, 0($s1) #loads byte
+xor $t3, $t1, $t2 #xor operation in binary
+sb $t3, 0($s2) #stores byte then stacks character
+addi $t0, $t0, -1 #goes through loop for all characters
+addi $s2, $s2, 1 #adds 1 to stack in chararray
+addi $s1, $s1, 1 #adds 1 to stack in encarray
+li $t3, 0
+
+j loop2
+
+exit:
+li $v0, 4
+la $a0, str3
+syscall
+
+li $v0, 4
+la $a0, space
+syscall
+
+li $v0, 4
+la $a0, decarray
+syscall
+
+li $v0, 10
+syscall
+

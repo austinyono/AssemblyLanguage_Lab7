@@ -1,0 +1,38 @@
+.data
+str1: .asciiz "Please input a temperature in Celsius: "
+str2: .asciiz "The temperature in Fahrenheit is: "
+num1: .float 1.8
+num2: .float 32.0
+
+.text
+
+l.s $f1, num1
+l.s $f2, num2
+
+li $v0, 4
+la $a0, str1
+syscall
+
+li $v0, 5 #user input
+syscall
+
+add $t1, $v0, $0
+mtc1 $t1, $f3 #move t1 to co-proc 1, f3
+
+cvt.s.w $f4, $f3
+
+mul.s $f5, $f4, $f1
+add.s $f6, $f5, $f2
+
+li $v0, 4
+la $a0, str2
+syscall
+
+li $v0, 2
+mov.s $f12, $f6
+syscall
+
+li $v0, 10
+syscall
+
+
